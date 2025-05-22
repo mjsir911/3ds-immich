@@ -157,9 +157,12 @@ int main()
 	// consoleInit (GFX_TOP, &g_logConsole);
 	consoleInit (GFX_BOTTOM, &g_sessionConsole);
 
+	// width, height
 	// consoleSetWindow (&g_statusConsole, 0, 0, 32, 1);
-	consoleSetWindow (&g_logConsole, 0, 1, 32, 23);
-	consoleSetWindow (&g_sessionConsole, 0, 0, 20, 20);
+	// consoleSetWindow (&g_logConsole, 0, 1, 32, 23);
+	// console is 40x25 maybe
+	// consoleSetWindow (&g_sessionConsole, 0, 0, 150, 25);
+	consoleSetWindow (&g_sessionConsole, 0, 0, 40, 25);
 
 	// consoleDebugInit (debugDevice_SVC);
 	consoleDebugInit(debugDevice_CONSOLE);
