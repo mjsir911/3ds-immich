@@ -123,8 +123,10 @@ int immich_upload(struct immichConn *conn, struct immichFile *ifile) {
 		goto mime_cleanup;
 	}
     // ok, so do I want to use filedata or do I want to roll my own curl_mime_data_cb
+	errno = 0;
 	if ((res = curl_mime_filedata(field, ifile->fpath)) != CURLE_OK) {
 		fprintf(stderr, "curl_mime_filedata() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		if (errno) perror("curl_mime_filedata()");
 		ret = -1;
 		goto mime_cleanup;
 	}
@@ -170,8 +172,10 @@ int immich_upload(struct immichConn *conn, struct immichFile *ifile) {
 	}
 
 	// do it
+	errno = 0;
 	if((res = curl_easy_perform(curl)) != CURLE_OK) {
 		fprintf(stderr, "curl_easy_perform() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		if (errno) perror("curl_easy_perform()");
 		ret = -1;
 		goto slist_cleanup;
 	}
