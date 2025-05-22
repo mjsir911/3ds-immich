@@ -1,0 +1,6 @@
+*.elf
+*.3dsx
+*.o
+*.map
+*.d
+*.smdh
