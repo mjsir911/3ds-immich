@@ -9,6 +9,10 @@
 
 #include <curl/curl.h>
 
+#include <errno.h>
+
+static CURL *curl = NULL;
+
 int immich_upload(struct immichConn *conn, struct immichFile *ifile) {
 	CURLcode res;
 
@@ -16,9 +20,11 @@ int immich_upload(struct immichConn *conn, struct immichFile *ifile) {
 		fprintf(stderr, "curl_global_init() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
 	}
 
-	CURL *curl = curl_easy_init();
-	if (!curl) {
-		return -1;
+	if (curl == NULL) {
+		curl = curl_easy_init();
+		if (curl == NULL) {
+			return -1;
+		}
 	}
 
     int ret = 0;
@@ -181,7 +187,7 @@ int immich_upload(struct immichConn *conn, struct immichFile *ifile) {
 	curl_mime_free(form);
 
     curl_cleanup:
-	 curl_easy_cleanup(curl); // TODO: I shouldn't do this, reusing sessions is good
+	// curl_easy_cleanup(curl); // TODO: I shouldn't do this, reusing sessions is good
 
 	return ret;
 }
