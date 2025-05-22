@@ -5,7 +5,6 @@
 #include <3ds.h>
 
 #include "text.h"
-#include "output.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -42,11 +41,11 @@ void cutLine(char* str)
 	memmove(str,str2,strlen(str2)+1);
 }
 
-void drawFrame()
-{
-	gfxFlushBuffers();
-	gfxSwapBuffers();
-}
+// void drawFrame()
+// {
+// 	gfxFlushBuffers();
+// 	gfxSwapBuffers();
+// }
 
 int colour = 1;
 int ball = 0;
