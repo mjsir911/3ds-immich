@@ -106,21 +106,21 @@ int mystat(char *fname, struct stat *st) {
 }
 
 int dothedirs() {
-	DIR *d;
-	struct dirent *dir;
-	d = opendir("sdmc:/DCIM/105NIN03/");
+	DIR *d = opendir("sdmc:/DCIM/105NIN03/");
 	int count = 0;
-	char fullname[2024];
 
 	struct immichConn conn = {
-		.url="http://10.100.14.210:2283",
+		.url="http://192.168.18.242:2283",
 		.auth="zvRGMLWP3J9vVE7uAvOTpx0BPFfdLMSNokOs3yxMhow"
 	};
 
-	struct immichFile f;
 	if (d) {
+		struct dirent *dir;
 		while ((dir = readdir(d)) != NULL) {
+			struct immichFile f;
+			char fullname[2024];
 			count++;
+			if (count < 25) continue;
 			sprintf(fullname, "sdmc:/DCIM/105NIN03/%s", dir->d_name);
 			f.fpath = fullname;
 			mystat(fullname, &f.st);
@@ -128,12 +128,17 @@ int dothedirs() {
 			f.file = fopen(f.fpath, "r");
 
 
-			immich_upload(&conn, &f);
+			fprintf(stderr, "%.8s: ", f.assetId);
+			int ret = immich_upload(&conn, &f);
+			fclose(f.file);
 			fprintf(stderr, "\n");
+			if (ret != 0) {
+				break;
+			}
 			// max size: 90000
 
 			// printf("%s\n", dir->d_name);
-			if (count > 20) break;
+			// if (count > 40) break;
 		}
 		closedir(d);
 	}
