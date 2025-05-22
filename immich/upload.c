@@ -21,55 +21,82 @@ int immich_upload(struct immichConn *conn, struct immichFile *ifile) {
 		return -1;
 	}
 
+    int ret = 0;
 
 	curl_mime *form = curl_mime_init(curl);
 	if (form == NULL) {
 		fprintf(stderr, "curl_mime_init() L%i failed\n", __LINE__);
+		ret = -1;
+		goto curl_cleanup;
 	}
 
 	curl_mimepart *field = NULL;
 
 	if ((field = curl_mime_addpart(form)) == NULL) {
 		fprintf(stderr, "curl_mime_addpart() L%i failed\n", __LINE__);
+		ret = -1;
+		goto mime_cleanup;
 	};
 	if ((res = curl_mime_name(field, "deviceAssetId")) != CURLE_OK) {
 		fprintf(stderr, "curl_mime_name() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
 	if ((res = curl_mime_data(field, ifile->assetId, CURL_ZERO_TERMINATED)) != CURLE_OK) {; // TODO: unique based off of file
 		fprintf(stderr, "curl_mime_name() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
 
 	if ((field = curl_mime_addpart(form)) == NULL) {
 		fprintf(stderr, "curl_mime_addpart() L%i failed\n", __LINE__);
+		ret = -1;
+		goto mime_cleanup;
 	};
 	if ((res = curl_mime_name(field, "deviceId")) != CURLE_OK) {
 		fprintf(stderr, "curl_mime_name() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
 	if ((res = curl_mime_data(field, "libimmich-c", CURL_ZERO_TERMINATED)) != CURLE_OK) {; // TODO: appendable based on config, user-agent
 		fprintf(stderr, "curl_mime_data() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
 
 	if ((field = curl_mime_addpart(form)) == NULL) {
 		fprintf(stderr, "curl_mime_addpart() L%i failed\n", __LINE__);
+		ret = -1;
+		goto mime_cleanup;
 	};
 	if ((res = curl_mime_name(field, "fileCreatedAt")) != CURLE_OK) {
 		fprintf(stderr, "curl_mime_name() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
 	struct tm *tm_info = localtime(&ifile->st.st_mtim.tv_sec); // TODO: timezones
 	char iso_mtime[28];
 	strftime(iso_mtime, sizeof(iso_mtime), "%Y-%m-%dT%H:%M:%S%z", tm_info);
 	if ((res = curl_mime_data(field, iso_mtime, CURL_ZERO_TERMINATED)) != CURLE_OK) {;
 		fprintf(stderr, "curl_mime_data() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
 
 	if ((field = curl_mime_addpart(form)) == NULL) {
 		fprintf(stderr, "curl_mime_addpart() L%i failed\n", __LINE__);
+		ret = -1;
+		goto mime_cleanup;
 	};
 	if ((res = curl_mime_name(field, "fileModifiedAt")) != CURLE_OK) {
 		fprintf(stderr, "curl_mime_name() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
 	if ((res = curl_mime_data(field, iso_mtime, CURL_ZERO_TERMINATED)) != CURLE_OK) {;
 		fprintf(stderr, "curl_mime_data() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
 
 	/* ignored fields rn:
@@ -81,12 +108,19 @@ int immich_upload(struct immichConn *conn, struct immichFile *ifile) {
 	// the meat
 	if ((field = curl_mime_addpart(form)) == NULL) {
 		fprintf(stderr, "curl_mime_addpart() L%i failed\n", __LINE__);
+		ret = -1;
+		goto mime_cleanup;
 	};
 	if ((res = curl_mime_name(field, "assetData")) != CURLE_OK) {
 		fprintf(stderr, "curl_mime_name() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
-	if ((res = curl_mime_filedata(field, ifile->fpath)) != CURLE_OK) {;
+    // ok, so do I want to use filedata or do I want to roll my own curl_mime_data_cb
+	if ((res = curl_mime_filedata(field, ifile->fpath)) != CURLE_OK) {
 		fprintf(stderr, "curl_mime_filedata() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto mime_cleanup;
 	}
 
 	// field = curl_mime_addpart(form);
@@ -104,6 +138,8 @@ int immich_upload(struct immichConn *conn, struct immichFile *ifile) {
 	
 	if ((tmpheaderlist = curl_slist_append(headerlist, apiheader)) == NULL) {
 		fprintf(stderr, "curl_slist_append() L%i failed\n", __LINE__);
+		ret = -1;
+		goto slist_cleanup;
 	}
 	headerlist = tmpheaderlist;
 	// headerlist = curl_slist_append(headerlist, "x-immich-checksum: awawa"); // TODO
@@ -113,26 +149,41 @@ int immich_upload(struct immichConn *conn, struct immichFile *ifile) {
 	sprintf(url, "%s/api/assets", conn->url);
 	if ((res = curl_easy_setopt(curl, CURLOPT_URL, url)) != CURLE_OK) {
 		fprintf(stderr, "curl_easy_setopt() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto slist_cleanup;
 	}
 	if ((res = curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headerlist)) != CURLE_OK) {
 		fprintf(stderr, "curl_easy_setopt() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto slist_cleanup;
 	}
 	if ((res = curl_easy_setopt(curl, CURLOPT_MIMEPOST, form)) != CURLE_OK) {
 		fprintf(stderr, "curl_easy_setopt() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto slist_cleanup;
 	}
 
 	// do it
 	if((res = curl_easy_perform(curl)) != CURLE_OK) {
 		fprintf(stderr, "curl_easy_perform() L%i failed: %s\n", __LINE__, curl_easy_strerror(res));
+		ret = -1;
+		goto slist_cleanup;
 	}
 
 	/* always cleanup */
-	curl_easy_cleanup(curl); // TODO: I shouldn't do this, reusing sessions is good
 
-	/* then cleanup the form */
-	curl_mime_free(form);
+    slist_cleanup:
 	/* free slist */
 	curl_slist_free_all(headerlist);
+
+    mime_cleanup:
+	/* then cleanup the form */
+	curl_mime_free(form);
+
+    curl_cleanup:
+	 curl_easy_cleanup(curl); // TODO: I shouldn't do this, reusing sessions is good
+
+	return ret;
 }
 
 // int main(int argc, char *argv[])
