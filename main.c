@@ -46,7 +46,6 @@ void cutLine(char* str)
 // }
 
 int colour = 1;
-int ball = 0;
 
 #define SOC_BUFFERSIZE  0x100000
 #define SOC_ALIGN       0x1000
@@ -285,70 +284,12 @@ int main()
 
 
 
-		cnt++;
-
-		if (kDown & KEY_A)
-		{
-			if (qq == 2) {
-				//qq = 0;
-				cn++;
-			} else { //qq == 0
-				qq = 2;
-				cn++;
-			}
-
-		}
-
-
-		if (kDown & KEY_B)
-		{
-			if (cn > 2)
-			{
-				cn--;
-			}
-		}
-
-		//carrot
-
-		if (kDown & KEY_X)
-		{
-			if (ss == 2) {
-				//s = 0;
-				sn++;
-			} else { //ss == 0
-				ss = 2;
-				sn++;
-			}
-
-		}
-
-		if (kDown & KEY_Y)
-		{
-			if (sn > 2)
-			{
-				sn--;
-			}
-		}
-
-		//Ball WHEEEE
-		if (kDown & KEY_L)
-		{
-			if (ball == 0)
-			{
-				ball = 1;
-			} else {
-				ball = 0;
-			}
-		}
-
-
-		if (ball == 1) {
+		if (kDown & KEY_L) {
 			fprintf(stderr, "hello\n");
 			printf("polo\n");
 			dothedirs();
 			// immich_upload(&conn, &f);
 			printf("world\n");
-			ball = 0;
 		}
 
 
