@@ -4,8 +4,6 @@
 #include <string.h>
 #include <3ds.h>
 
-#include "text.h"
-
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -49,33 +47,6 @@ void cutLine(char* str)
 
 int colour = 1;
 int ball = 0;
-
-int ballX = 200;
-int ballY = 120;
-
-void drawBall(int xpos, int ypos) {
-	gfxDrawText(GFX_TOP, GFX_RIGHT, NULL, "BALL", xpos, ypos);
-
-
-  /*
-	gfxScreen_t screen = GFX_TOP;
-	gfx3dSide_t side = GFX_LEFT;
-	font_s* f = &fontDefault;
-	char* str = "O";
-	//s16 x = 240-fontDefault.height*2;
-	//s16 y = 10;
-
-  //Place ball
-	int x = xpos;
-	int y = ypos;
-
-
-	u16 fbWidth, fbHeight;
-	u8* fbAdr=gfxGetFramebuffer(screen, side, &fbWidth, &fbHeight);
-
-	drawString(fbAdr, f, str, y, x, fbHeight, fbWidth);
-	*/
-}
 
 #define SOC_BUFFERSIZE  0x100000
 #define SOC_ALIGN       0x1000
@@ -299,14 +270,6 @@ int main()
 		}
 
 
-		gfxDrawText(GFX_TOP, GFX_LEFT, NULL, "Hello WORLD .-.", 240-fontDefault.height*1, 10);
-        // if (ret != 0) {
-        //     gfxDrawText(GFX_TOP, GFX_LEFT, NULL, "polo", 240-fontDefault.height*10, 10);
-        // } else {
-		gfxDrawText(GFX_TOP, GFX_LEFT, NULL, "awawa", 240-fontDefault.height*10, 10);
-        // }
-		//print("\n\nclient has disconnected.\npress B to exit, or wait for next client !\n\n");
-
 		u32 kDown = hidKeysDown();
 
 		//Switch colors w/ R
@@ -336,14 +299,6 @@ int main()
 
 		}
 
-		if (qq == 2)
-		{
-			for (k=2;k<cn;k++) {
-				gfxDrawText(GFX_TOP, GFX_LEFT, NULL, "spaghetti", 240-fontDefault.height*k+latest, 10);
-				goto exit;
-				//latest++;
-			}
-		}
 
 		if (kDown & KEY_B)
 		{
@@ -367,31 +322,6 @@ int main()
 
 		}
 
-		if (ss == 2)
-		{
-			for (v=2;v<sn;v++) {
-				//gfxDrawText(GFX_TOP, GFX_RIGHT, NULL, "carrot", 240-fontDefault.height*v+latest, 10);
-
-				gfxScreen_t screen = GFX_TOP;
-				gfx3dSide_t side = GFX_RIGHT;
-				font_s* f = NULL;
-				char* str = "carrot";
-				s16 x = 240-fontDefault.height*v+latest;
-				s16 y = 10;
-
-				if(!str)return 1;
-				if(!f)f=&fontDefault;
-
-				u16 fbWidth, fbHeight;
-				u8* fbAdr=gfxGetFramebuffer(screen, side, &fbWidth, &fbHeight);
-
-				//Lettuce shift to the right
-				y=y+60;
-
-				drawString(fbAdr, f, str, y, x, fbHeight, fbWidth);
-			}
-		}
-
 		if (kDown & KEY_Y)
 		{
 			if (sn > 2)
@@ -411,26 +341,6 @@ int main()
 			}
 		}
 
-		//MOVE DAT BALL
-		if (kDown & KEY_DUP)
-		{
-			ballY=ballY+5;
-		}
-		if (kDown & KEY_DDOWN)
-		{
-			ballY=ballY-5;
-		}
-
-		if (kDown & KEY_DRIGHT)
-		{
-			ballX=ballX+5;
-		}
-
-		if (kDown & KEY_DLEFT)
-		{
-			ballX=ballX-5;
-		}
-
 
 		if (ball == 1) {
 			fprintf(stderr, "hello\n");
@@ -439,8 +349,6 @@ int main()
 			// immich_upload(&conn, &f);
 			printf("world\n");
 			ball = 0;
-
-			drawBall(ballX, ballY);
 		}
 
 

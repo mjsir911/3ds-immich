@@ -35,7 +35,7 @@ LDFLAGS+=-specs=3dsx.specs -g $(ARCH)
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ $^ -c
 
-OBJS=font.o  font1.o  main.o  text.o immich/upload.o
+OBJS=main.o immich/upload.o
 
 PROJNAME=immich-3ds
 
