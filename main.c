@@ -101,7 +101,12 @@ int dothedirs(char *dpath) {
 
 
 			fprintf(stderr, "%.8s: ", f.assetId);
-			int ret = immich_upload(&conn, &f);
+			int ret = 0;
+			if (strstr(fullname, "JPG") != NULL) {
+				ret = immich_upload(&conn, &f);
+			} else {
+				fprintf(stderr, "skipping!");
+			}
 			fclose(f.file);
 			fprintf(stderr, "\n");
 			if (ret != 0) {
