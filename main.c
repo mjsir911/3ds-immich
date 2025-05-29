@@ -77,32 +77,58 @@ int mystat(char *fname, struct stat *st) {
 	return 0;
 }
 
-int dothedirs(char *dpath) {
-	DIR *d = opendir(dpath);
-	int count = 0;
 
+int dothedirs() {
 	struct immichConn conn = {
 		.url=IMMICH_URL,
 		.auth=IMMICH_KEY
 	};
 
-	if (d) {
+	char fullpath[2024];
+
+	int count = 0;
+
+	char *toplevel = "sdmc:/DCIM/";
+
+	DIR *topdir = opendir(toplevel);
+	if (!topdir) {
+		return -1;
+	}
+
+	struct dirent *subdirent;
+	while ((subdirent = readdir(topdir)) != NULL) {
+		strcpy(fullpath, toplevel);
+		strcat(fullpath, subdirent->d_name);
+		strcat(fullpath, "/");
+
+		DIR *d = opendir(fullpath);
+
+
+		if (!d) {
+			return -1;
+		}
+
 		struct dirent *dir;
 		while ((dir = readdir(d)) != NULL) {
+			strcpy(fullpath, toplevel);
+			strcat(fullpath, subdirent->d_name);
+			strcat(fullpath, "/");
+			strcat(fullpath, dir->d_name);
+
+
+
 			struct immichFile f;
-			char fullname[2024];
 			count++;
 			if (count < 25) continue;
-			sprintf(fullname, "%s/%s", dpath, dir->d_name);
-			f.fpath = fullname;
-			mystat(fullname, &f.st);
+			f.fpath = fullpath;
+			mystat(fullpath, &f.st);
 			sprintf(f.assetId, "%s-%lld", dir->d_name, f.st.st_size);
 			f.file = fopen(f.fpath, "r");
 
 
 			fprintf(stderr, "%.8s: ", f.assetId);
 			int ret = 0;
-			if (strstr(fullname, "JPG") != NULL) {
+			if (strstr(fullpath, "JPG") != NULL) {
 				ret = immich_upload(&conn, &f);
 			} else {
 				fprintf(stderr, "skipping!");
@@ -118,7 +144,12 @@ int dothedirs(char *dpath) {
 			// if (count > 40) break;
 		}
 		closedir(d);
+
+
 	}
+	closedir(topdir);
+
+
 }
 
 int main()
@@ -294,7 +325,7 @@ int main()
 		if (kDown & KEY_L) {
 			fprintf(stderr, "hello\n");
 			printf("polo\n");
-			dothedirs("sdmc:/DCIM/106NIN03/");
+			dothedirs();
 			// immich_upload(&conn, &f);
 			printf("world\n");
 		}
