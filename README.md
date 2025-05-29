@@ -5,8 +5,11 @@ for all your lo-fi photograpy needs
 
 ## Building
 
-this depends on the devkitarm toolchain. kinda sucks to set up, left as an
-exercise to the reader.
+- set up docker (or the devkitarm toolchain natively on your machine, but this
+  kinda sucks and requires some slight makefile modifications) on your machine.
+- edit `config.h` to point to your immich server & have your
+  [immich api key](https://immich.app/docs/features/command-line-interface#obtain-the-api-key)
+- `make`
 
 ## Installing
 

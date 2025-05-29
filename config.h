@@ -1,0 +1,2 @@
+#define IMMICH_URL "http://192.168.18.242:2283"
+#define IMMICH_KEY "zvRGMLWP3J9vVE7uAvOTpx0BPFfdLMSNokOs3yxMhow"

@@ -80,8 +80,8 @@ int dothedirs() {
 	int count = 0;
 
 	struct immichConn conn = {
-		.url="http://192.168.18.242:2283",
-		.auth="zvRGMLWP3J9vVE7uAvOTpx0BPFfdLMSNokOs3yxMhow"
+		.url=IMMICH_URL,
+		.auth=IMMICH_KEY
 	};
 
 	if (d) {
