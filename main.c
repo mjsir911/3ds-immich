@@ -18,6 +18,8 @@
 
 #include "immich/immich.h"
 
+#include "config.h"
+
 PrintConsole g_statusConsole;
 PrintConsole g_logConsole;
 PrintConsole g_sessionConsole;
@@ -75,8 +77,8 @@ int mystat(char *fname, struct stat *st) {
 	return 0;
 }
 
-int dothedirs() {
-	DIR *d = opendir("sdmc:/DCIM/105NIN03/");
+int dothedirs(char *dpath) {
+	DIR *d = opendir(dpath);
 	int count = 0;
 
 	struct immichConn conn = {
@@ -91,7 +93,7 @@ int dothedirs() {
 			char fullname[2024];
 			count++;
 			if (count < 25) continue;
-			sprintf(fullname, "sdmc:/DCIM/105NIN03/%s", dir->d_name);
+			sprintf(fullname, "%s/%s", dpath, dir->d_name);
 			f.fpath = fullname;
 			mystat(fullname, &f.st);
 			sprintf(f.assetId, "%s-%lld", dir->d_name, f.st.st_size);
@@ -287,7 +289,7 @@ int main()
 		if (kDown & KEY_L) {
 			fprintf(stderr, "hello\n");
 			printf("polo\n");
-			dothedirs();
+			dothedirs("sdmc:/DCIM/106NIN03/");
 			// immich_upload(&conn, &f);
 			printf("world\n");
 		}
