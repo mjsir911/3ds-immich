@@ -37,6 +37,7 @@ transfer them over using the photo app.
     - parsing the .well-known url
     - doing a bulk upload check
 - Read photos taken to SRAM
+- Figure out timezone offsets / automatically apply timezone & offset
 
 
 
