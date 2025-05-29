@@ -13,7 +13,7 @@ for all your lo-fi photograpy needs
 
 ## Installing
 
-- Jailbreak your 3ds
+- [Jailbreak your 3ds](https://3ds.hacks.guide/)
 - Make sure your 3ds is on the same network as the computer you're presumably on
 - Open the homebrew launcher
 - Press «Y»
