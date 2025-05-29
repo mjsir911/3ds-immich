@@ -119,12 +119,11 @@ int dothedirs() {
 
 			struct immichFile f;
 			count++;
-			if (count < 25) continue;
+			// if (count < 25) continue;
 			f.fpath = fullpath;
 			mystat(fullpath, &f.st);
 			sprintf(f.assetId, "%s-%lld", dir->d_name, f.st.st_size);
 			f.file = fopen(f.fpath, "r");
-
 
 			fprintf(stderr, "%.8s: ", f.assetId);
 			int ret = 0;
@@ -138,18 +137,10 @@ int dothedirs() {
 			if (ret != 0) {
 				break;
 			}
-			// max size: 90000
-
-			// printf("%s\n", dir->d_name);
-			// if (count > 40) break;
 		}
 		closedir(d);
-
-
 	}
 	closedir(topdir);
-
-
 }
 
 int main()
