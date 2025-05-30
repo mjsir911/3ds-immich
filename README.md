@@ -28,6 +28,18 @@ stored within the sd card.  Make sure you're saving photos to the sd card or
 transfer them over using the photo app.
 
 
+### A note about time zones
+
+The nintendo 3ds does not know what timezone it is in. If you set your time on
+your 3ds to your local time, the reported metadata on photos taken will be
+incorrect, reporting the time it was taken in your local time but within the
+UTC time zone.
+
+Currently there is no way to manually offset the time zone within this app. as
+a workaround you can set your 3ds time to the current time in UTC & the
+metadata will be correct (if not lacking time zones
+
+
 ## Planned features
 
 - Run as a background service, polling for new files to upload
