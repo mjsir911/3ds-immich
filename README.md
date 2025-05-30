@@ -27,6 +27,8 @@ Pressing right trigger with the app launched currently uploads all photos
 stored within the sd card.  Make sure you're saving photos to the sd card or
 transfer them over using the photo app.
 
+Currently all photos are uploaded every time. Sorry about that
+
 
 ### A note about time zones
 
